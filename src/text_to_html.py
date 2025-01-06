@@ -17,3 +17,23 @@ def text_node_to_html_node(text_node):
     else:
         raise ValueError("Unkown text type")
     return leaf_node
+
+def split_nodes_delimiter(old_nodes, delimiter, text_type):
+    new_nodes = []
+    for node in old_nodes:
+        if node.text_type is not TextType.NORMAL_TEXT:
+            new_nodes.append(node)
+
+        else:
+            text_split = node.text.split(delimiter)
+
+            if len(text_split) % 2 == 0:
+                raise ValueError("Unmatched delimiter found in the text")
+            
+            for i, segment in enumerate(text_split):
+                if i % 2 == 0:
+                    new_nodes.append(TextNode(segment, TextType.NORMAL_TEXT))
+                else:
+                    new_nodes.append(TextNode(segment, text_type))
+    
+    return new_nodes
