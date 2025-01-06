@@ -1,4 +1,6 @@
 from textnode import *
+from htmlnode import *
+from enum import Enum
 
 def main():
     # Create a TextNode object with dummy values
