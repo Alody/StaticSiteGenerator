@@ -1,5 +1,5 @@
 import unittest
-from text_to_html import *
+from inline_markdown import *
 
 class TestTextToHtml(unittest.TestCase):
     def test_normal_text(self):
