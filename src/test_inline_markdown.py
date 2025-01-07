@@ -86,9 +86,46 @@ class TestMarkdownExtraction(unittest.TestCase):
             matches,
         )
 
+    def test_split_nodes_image_basic(self):
+        node = TextNode("Hello ![alt](image.png) World", TextType.NORMAL_TEXT)
+        nodes = split_nodes_images([node])
+        self.assertEqual(len(nodes), 3)
+        self.assertEqual(nodes[0].text, "Hello ")
+        self.assertEqual(nodes[0].text_type, TextType.NORMAL_TEXT)
+        self.assertEqual(nodes[1].text, "alt")
+        self.assertEqual(nodes[1].text_type, TextType.IMAGES)
+        self.assertEqual(nodes[2].text, " World")
+        self.assertEqual(nodes[2].text_type, TextType.NORMAL_TEXT)
 
+    def test_split_nodes_links_basic(self):
+        node = TextNode("Hello [alt](image.png) World", TextType.NORMAL_TEXT)
+        nodes = split_nodes_links([node])
+        self.assertEqual(len(nodes), 3)
+        self.assertEqual(nodes[0].text, "Hello ")
+        self.assertEqual(nodes[0].text_type, TextType.NORMAL_TEXT)
+        self.assertEqual(nodes[1].text, "alt")
+        self.assertEqual(nodes[1].text_type, TextType.LINKS)
+        self.assertEqual(nodes[2].text, " World")
+        self.assertEqual(nodes[2].text_type, TextType.NORMAL_TEXT)
 
-
+    def test_multiple_images(self):
+        node = TextNode("This has ![alt1](img1.png) two ![alt2](img2.png) images", TextType.NORMAL_TEXT)
+        nodes = split_nodes_images([node])
+        self.assertEqual(len(nodes), 5)
+        self.assertEqual(nodes[0].text_type, TextType.NORMAL_TEXT)
+        self.assertEqual(nodes[0].text, "This has ")
+        self.assertEqual(nodes[1].text, "alt1")
+        self.assertEqual(nodes[1].text_type, TextType.IMAGES)
+        self.assertEqual(nodes[1].url, "img1.png")
+        self.assertNotEqual(nodes[1].url, "alt1")
+        self.assertEqual(nodes[2].text, " two ")
+        self.assertEqual(nodes[2].text_type, TextType.NORMAL_TEXT)
+        self.assertEqual(len(nodes[2].text), 5)
+        self.assertEqual(nodes[3].text_type, TextType.IMAGES)
+        self.assertEqual(nodes[3].text, "alt2")
+        self.assertEqual(nodes[3].url, "img2.png")
+        self.assertEqual(nodes[4].text, " images")
+        self.assertEqual(nodes[4].text_type, TextType.NORMAL_TEXT)
 
 if __name__ == '__main__':
     unittest.main()

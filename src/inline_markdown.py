@@ -59,15 +59,22 @@ def extract_markdown_links(text):
 def split_nodes_images(old_nodes):
     result = []
     for node in old_nodes:
+        if "![" not in node.text:
+            result.append(node)
+            continue
+        
         current_text = node.text
+
         for alt, url in extract_markdown_images(node.text):
             # split text on img + url delimiter
             sections = current_text.split(f"![{alt}]({url})", 1)
             # b4 img text
-            before_img = TextNode(sections[0], TextType.NORMAL_TEXT)
+            if sections[0]:  # prevent adding empty text
+                before_img = TextNode(sections[0], TextType.NORMAL_TEXT)
+                result.append(before_img)
+            
             # text node for img
             img_node = TextNode(alt, TextType.IMAGES, url)
-            result.append(before_img)
             result.append(img_node)
             current_text = sections[1]
         
@@ -79,15 +86,21 @@ def split_nodes_images(old_nodes):
 def split_nodes_links(old_nodes):
     result = []
     for node in old_nodes:
+        if "[" not in node.text:
+            result.append(node)
+            continue
+
         current_text = node.text
+        
         for alt, url in extract_markdown_links(node.text):
             # split text on link syntax
             sections = current_text.split(f"[{alt}]({url})", 1)
             # text before link
-            before_link = TextNode(sections[0], TextType.NORMAL_TEXT)
+            if sections[0]:  # prevent adding empty text
+                before_link = TextNode(sections[0], TextType.NORMAL_TEXT)
+                result.append(before_link)
             # text node for link
             link_node = TextNode(alt, TextType.LINKS, url)
-            result.append(before_link)
             result.append(link_node)
             current_text = sections[1]
         
