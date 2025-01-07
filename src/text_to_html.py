@@ -1,5 +1,9 @@
 from htmlnode import *
 from textnode import *
+import re
+
+# Modules: text node to html, inline markdown, extract markdown images
+
 
 def text_node_to_html_node(text_node):
     if text_node.text_type == TextType.NORMAL_TEXT:
@@ -39,3 +43,15 @@ def split_nodes_delimiter(old_nodes, delimiter, text_type):
                     new_nodes.append(TextNode(segment, text_type))
 
     return new_nodes
+
+
+def extract_markdown_images(text):
+    pattern = r"!\[([^\[\]]*)\]\(([^\(\)]*)\)"
+    matches = re.findall(pattern, text)
+    return matches
+
+def extract_markdown_links(text):
+    pattern = r"(?<!!)\[([^\[\]]*)\]\(([^\(\)]*)\)"
+    matches = re.findall(pattern, text)
+    return matches
+
