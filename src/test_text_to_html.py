@@ -61,6 +61,32 @@ class TestTextParser(unittest.TestCase):
 
 
 
+class TestMarkdownExtraction(unittest.TestCase):
+
+    def Markdown_images_extract_test(self):
+        text = "This is a ![cat](https://example.com/cat.jpg) and a ![dog](https://example.com/dog.jpg)"
+        expected = [("cat", "https://example.com/cat.jpg"), ("dog", "https://example.com/dog.jpg")]
+        self.assertEqual(extract_markdown_images(text), expected)
+
+    def test_extract_markdown_images(self):
+        matches = extract_markdown_images(
+            "This is text with an ![image](https://i.imgur.com/zjjcJKZ.png)"
+        )
+        self.assertListEqual([("image", "https://i.imgur.com/zjjcJKZ.png")], matches)
+
+    def test_extract_markdown_links(self):
+        matches = extract_markdown_links(
+            "This is text with a [link](https://boot.dev) and [another link](https://blog.boot.dev)"
+        )
+        self.assertListEqual(
+            [
+                ("link", "https://boot.dev"),
+                ("another link", "https://blog.boot.dev"),
+            ],
+            matches,
+        )
+
+
 
 
 
