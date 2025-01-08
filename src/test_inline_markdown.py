@@ -127,5 +127,48 @@ class TestMarkdownExtraction(unittest.TestCase):
         self.assertEqual(nodes[4].text, " images")
         self.assertEqual(nodes[4].text_type, TextType.NORMAL_TEXT)
 
+
+    def test_text_to_textnodes(self):
+
+        nodes_italic = "This is *italic* text"
+        expected = [TextNode("This is ", TextType.NORMAL_TEXT),
+                    TextNode("italic", TextType.ITALIC_TEXT),
+                    TextNode(" text", TextType.NORMAL_TEXT)]
+        self.assertEqual(text_to_textnodes(nodes_italic), expected)
+
+        nodes_code = "This is `code` text"
+        expected = [TextNode("This is ", TextType.NORMAL_TEXT),
+                    TextNode("code", TextType.CODE_TEXT),
+                    TextNode(" text", TextType.NORMAL_TEXT)]
+        self.assertEqual(text_to_textnodes(nodes_code), expected)
+
+        nodes_bold_code = "This is **bold** and `code` text"
+        expected = [TextNode("This is ", TextType.NORMAL_TEXT),
+                    TextNode("bold", TextType.BOLD_TEXT),
+                    TextNode(" and ", TextType.NORMAL_TEXT),
+                    TextNode("code", TextType.CODE_TEXT),
+                    TextNode(" text", TextType.NORMAL_TEXT)]
+        self.assertEqual(text_to_textnodes(nodes_bold_code), expected)
+
+        nodes_images_links = "This is text with ![funny image](le_monkeyfaec.png) and [epic link](lemon_keyface.png) lol"
+        expected = [TextNode("This is text with ", TextType.NORMAL_TEXT),
+                    TextNode("funny image", TextType.IMAGES, "le_monkeyfaec.png"),
+                    TextNode(" and ", TextType.NORMAL_TEXT),
+                    TextNode("epic link", TextType.LINKS, "lemon_keyface.png"),
+                    TextNode(" lol", TextType.NORMAL_TEXT)]
+        self.assertEqual(text_to_textnodes(nodes_images_links), expected)
+
+        nodes_empty_string = ""
+        expected = [TextNode("", TextType.NORMAL_TEXT)]
+        self.assertEqual(text_to_textnodes(nodes_empty_string), expected)
+
+        nodes_double_type = "This is **bold** text that is double **boldy** hehe"
+        expected = [TextNode("This is ", TextType.NORMAL_TEXT),
+                    TextNode("bold", TextType.BOLD_TEXT),
+                    TextNode(" text that is double ", TextType.NORMAL_TEXT),
+                    TextNode("boldy", TextType.BOLD_TEXT),
+                    TextNode(" hehe", TextType.NORMAL_TEXT)]
+        self.assertEqual(text_to_textnodes(nodes_double_type), expected)
+
 if __name__ == '__main__':
     unittest.main()
