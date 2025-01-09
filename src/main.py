@@ -1,15 +1,20 @@
-from textnode import *
-from htmlnode import *
-from enum import Enum
+import os
+import shutil
+
+from copystatic import copy_files_recursive
+
+
+dir_path_static = "./static"
+dir_path_public = "./public"
+
 
 def main():
-    # Create a TextNode object with dummy values
-    text_node = TextNode("This is a text node", TextType.BOLD_TEXT, "https://www.boot.dev")
-    
-    # Print the object to verify its string representation
-    print(text_node)
+    print("Deleting public directory...")
+    if os.path.exists(dir_path_public):
+        shutil.rmtree(dir_path_public)
 
-# Entry point
-if __name__ == "__main__":
-    main()
+    print("Copying static files to public directory...")
+    copy_files_recursive(dir_path_static, dir_path_public)
 
+
+main()
