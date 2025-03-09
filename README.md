@@ -3,4 +3,4 @@
 > Freaking epicsauce
 
 * Generate a static site
-* Win epicly
+* Win epicly hell yeah
